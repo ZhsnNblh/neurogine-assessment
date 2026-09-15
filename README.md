@@ -1,56 +1,122 @@
-# Welcome to your Expo app 👋
+# Neurogine Product Catalog
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native and Expo product catalog for browsing, searching, and viewing product details using the DummyJSON REST API.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Product catalog with paginated results
+- Product search with a 500 ms debounce
+- Pull-to-refresh for the catalog
+- Product detail screen with image, price, rating, brand, category, and description
+- Loading states for the catalog and product details
+- Error states with retry actions
+- Empty state for searches with no matching products
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- React Native 0.86
+- Expo SDK 57
+- TypeScript with strict compiler settings
+- Expo Router for file-based navigation
+- DummyJSON REST API
 
-   ```bash
-   npx expo start
-   ```
+## Architecture
 
-In the output, you'll find options to open the app in a
+The project is organized into a small set of responsibilities:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Presentation and UI
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Screens in `src/app/` handle screen state, user interaction, list rendering, and navigation. Reusable visual components are in `src/components/`, including `ProductCard`, `ThemedText`, and `ThemedView`.
 
-## Get a fresh project
+### Service/API
 
-When you're ready, run:
+`src/services/productService.ts` contains the API requests and returns the product data needed by the screens. It also converts non-successful HTTP responses into rejected requests.
 
-```bash
-npm run reset-project
+### Data and Types
+
+`src/types/product.ts` defines the `Product` data model used by the service and UI.
+
+## API & Data Flow
+
+The API base URL is `https://dummyjson.com`.
+
+- The catalog calls `GET /products?limit=10&skip={skip}` when no search term is entered.
+- A search calls `GET /products/search?q={query}&limit=10&skip={skip}`. The query is URL-encoded by the service.
+- The catalog screen waits 500 ms after the last search input change before requesting results.
+- When the list reaches the end, the screen increases `skip` by 10 and appends the next page to the existing products.
+- Pull-to-refresh resets the list position and requests the first page again.
+- The detail screen calls `GET /products/{id}` using the route parameter.
+
+The service parses the JSON response and returns typed product data. Screens then store that data in local React state and render it through the catalog list or detail layout.
+
+## Project Structure
+
+```text
+src/
+├── app/
+│   ├── _layout.tsx             Root Expo Router layout
+│   ├── index.tsx               Catalog screen and catalog state
+│   ├── explore.tsx             Explore route included in the app
+│   └── product/[id].tsx        Product detail screen
+├── components/
+│   ├── ProductCard.tsx         Reusable catalog product card
+│   ├── themed-text.tsx         Theme-aware text component
+│   ├── themed-view.tsx         Theme-aware view component
+│   └── ...                     Other shared UI components
+├── constants/
+│   └── theme.ts                Theme colors, fonts, and spacing values
+├── hooks/
+│   └── ...                     Color-scheme and theme hooks
+├── services/
+│   └── productService.ts       Product list and detail API requests
+└── types/
+	└── product.ts              Product data model
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+`app.json` contains the Expo application configuration, and `package.json` contains the development scripts and dependencies.
 
-### Other setup steps
+## Getting Started
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Install Node.js and npm, then install the project dependencies:
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Start the Expo development server:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+From the Expo CLI, the application can be opened in Expo Go by scanning the QR code on a compatible physical device.
 
-Join our community of developers creating universal apps.
+## Testing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+No automated test suite is included in the project. The main functionality can be verified manually by:
+
+- Loading the catalog and scrolling through additional pages
+- Searching for products and confirming the debounced results
+- Pulling down to refresh the catalog
+- Opening a product and checking its detail information
+- Testing loading, empty, error, and retry states
+
+The application was manually tested on a physical iPhone using Expo Go.
+
+## Development History
+
+The project was developed incrementally using Git commits. The recorded milestones include:
+
+1. Initial project setup
+2. Product data model
+3. Product API service
+4. Product detail API service
+5. Product detail screen
+6. Catalog search and pagination
+7. Product catalog UI polish
+
+## Notes
+
+- Product data is loaded from the remote DummyJSON API, so catalog and detail screens require network access.
+- The app uses local React state and does not add an external state-management library.
+- The project uses TypeScript strict mode and keeps API communication separate from the presentation layer.
