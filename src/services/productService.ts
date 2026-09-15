@@ -27,3 +27,17 @@ export async function getProducts(
     total: data.total,
   };
 }
+
+export async function getProductById(
+  id: string
+): Promise<Product> {
+  const response = await fetch(`${BASE_URL}/products/${id}`);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return data;
+}
