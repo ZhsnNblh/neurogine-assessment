@@ -120,3 +120,13 @@ The project was developed incrementally using Git commits. The recorded mileston
 - Product data is loaded from the remote DummyJSON API, so catalog and detail screens require network access.
 - The app uses local React state and does not add an external state-management library.
 - The project uses TypeScript strict mode and keeps API communication separate from the presentation layer.
+
+## AI Assistance
+
+AI tools were used minimally for guidance, documentation, and UI/UX suggestions during development.
+
+GitHub Copilot was used to assist with UI styling and presentation improvements, as well as image loading and error-handling implementation.
+
+The core application logic, project structure, API integration, pagination, search implementation, and architectural decisions were developed and reviewed by me.
+
+All submitted code has been reviewed and tested by me, and I am able to explain the implementation.
