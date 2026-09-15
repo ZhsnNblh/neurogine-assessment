@@ -22,6 +22,8 @@ export default function ProductDetailsScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
   setLoading(true);
@@ -64,11 +66,31 @@ export default function ProductDetailsScreen() {
   </View>
 ) : product ? (
       <ScrollView contentContainerStyle={styles.content}>
-        <Image
-          source={{ uri: product.thumbnail }}
-          style={styles.image}
-          resizeMode="contain"
-        />
+        <View style={styles.imageFrame}>
+          {imageError ? (
+            <View style={styles.imageFallback}>
+              <Text style={styles.imageFallbackText}>Image unavailable</Text>
+            </View>
+          ) : (
+            <>
+              {imageLoading && (
+                <View style={styles.imagePlaceholder}>
+                  <ActivityIndicator size="small" color="#1D6B5B" />
+                </View>
+              )}
+              <Image
+                source={{ uri: product.thumbnail }}
+                style={styles.image}
+                resizeMode="contain"
+                onLoad={() => setImageLoading(false)}
+                onError={() => {
+                  setImageLoading(false);
+                  setImageError(true);
+                }}
+              />
+            </>
+          )}
+        </View>
 
         <ThemedText type="small" style={styles.category}>
           {product.category}
@@ -125,9 +147,28 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 290,
+  },
+  imageFrame: {
+    width: '100%',
+    height: 290,
     marginBottom: 24,
     borderRadius: 14,
+    overflow: 'hidden',
     backgroundColor: '#FFFFFF',
+  },
+  imagePlaceholder: {
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageFallback: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageFallbackText: {
+    color: '#748078',
+    fontSize: 14,
   },
   category: {
     color: '#1D6B5B',

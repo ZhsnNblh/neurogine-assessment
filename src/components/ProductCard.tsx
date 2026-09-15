@@ -1,4 +1,12 @@
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Product } from '@/types/product';
@@ -12,6 +20,9 @@ export function ProductCard({
   product,
   onPress,
 }: ProductCardProps) {
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
   return (
   <Pressable
     style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
@@ -19,11 +30,29 @@ export function ProductCard({
     accessibilityRole="button"
   >
     <View style={styles.imageFrame}>
-      <Image
-        source={{ uri: product.thumbnail }}
-        style={styles.image}
-        resizeMode="contain"
-      />
+      {imageError ? (
+        <View style={styles.imageFallback}>
+          <Text style={styles.imageFallbackText}>Image unavailable</Text>
+        </View>
+      ) : (
+        <>
+          {imageLoading && (
+            <View style={styles.imagePlaceholder}>
+              <ActivityIndicator size="small" color="#1D6B5B" />
+            </View>
+          )}
+          <Image
+            source={{ uri: product.thumbnail }}
+            style={styles.image}
+            resizeMode="contain"
+            onLoad={() => setImageLoading(false)}
+            onError={() => {
+              setImageLoading(false);
+              setImageError(true);
+            }}
+          />
+        </>
+      )}
     </View>
 
     <View style={styles.info}>
@@ -88,6 +117,25 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
+  },
+
+  imagePlaceholder: {
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  imageFallback: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  },
+
+  imageFallbackText: {
+    color: '#748078',
+    fontSize: 12,
+    textAlign: 'center',
   },
 
   info: {
