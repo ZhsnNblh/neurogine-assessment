@@ -31,12 +31,15 @@ export function ProductCard({
           {product.title}
         </ThemedText>
 
-        <ThemedText>
-          {product.category}
-        </ThemedText>
+        <ThemedText
+  type="default"
+  numberOfLines={1}
+>
+  {product.category}
+</ThemedText>
 
-        <ThemedText>
-          ${product.price}
+        <ThemedText type="smallBold">
+            ${product.price.toFixed(2)}
         </ThemedText>
       </View>
     </Pressable>
@@ -47,12 +50,12 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
     padding: 12,
     borderRadius: 16,
     backgroundColor: '#ffffff',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: '#eeeeee',
   },
 
   image: {

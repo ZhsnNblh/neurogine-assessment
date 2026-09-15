@@ -66,21 +66,29 @@ export default function ProductDetailsScreen() {
           {product.title}
         </ThemedText>
 
-        <ThemedText>
-          {product.category}
-        </ThemedText>
+        <ThemedText type="subtitle">
+  {product.category}
+</ThemedText>
 
-        <ThemedText>
-          ${product.price}
-        </ThemedText>
+<ThemedText>
+  Brand: {product.brand}
+</ThemedText>
 
-        <ThemedText>
-          Rating: {product.rating} ⭐
-        </ThemedText>
+<ThemedText type="title">
+  ${product.price.toFixed(2)}
+</ThemedText>
 
-        <ThemedText>
-          {product.description}
-        </ThemedText>
+<ThemedText type="smallBold">
+  Rating: {product.rating} ⭐
+</ThemedText>
+
+<ThemedText type="subtitle">
+  Description
+</ThemedText>
+
+        <ThemedText type="default">
+  {product.description}
+</ThemedText>
       </ScrollView>
     ) : null}
   </ThemedView>
@@ -95,7 +103,9 @@ const styles = StyleSheet.create({
 
   image: {
   width: '100%',
-  height: 300,
+  height: 280,
   marginBottom: 20,
+  backgroundColor: '#f5f5f5',
+  borderRadius: 16,
   },
 });
